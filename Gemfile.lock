@@ -1,0 +1,69 @@
+GIT
+  remote: https://github.com/cropio/cropio-ruby.git
+  revision: 098d05285b8c5b415c6fd85b3130f20f861e4ce9
+  specs:
+    cropio-ruby (0.4)
+      json
+      rest-client
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activemodel (5.0.1)
+      activesupport (= 5.0.1)
+    activerecord (5.0.1)
+      activemodel (= 5.0.1)
+      activesupport (= 5.0.1)
+      arel (~> 7.0)
+    activesupport (5.0.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (~> 0.7)
+      minitest (~> 5.1)
+      tzinfo (~> 1.1)
+    arel (7.1.4)
+    byebug (9.0.6)
+    concurrent-ruby (1.0.5)
+    domain_name (0.5.20170223)
+      unf (>= 0.0.5, < 1.0.0)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
+    i18n (0.8.1)
+    json (2.0.3)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
+    minitest (5.10.1)
+    netrc (0.11.0)
+    oj (2.18.1)
+    pg (0.19.0)
+    rake (12.0.0)
+    redis (3.3.3)
+    rest-client (2.0.1)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
+    thread_safe (0.3.6)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  activerecord (~> 5.0)
+  activesupport (~> 5.0)
+  byebug
+  cropio-ruby!
+  oj
+  pg
+  rake
+  redis (~> 3.2)
+
+RUBY VERSION
+   ruby 2.3.1p112
+
+BUNDLED WITH
+   1.14.5

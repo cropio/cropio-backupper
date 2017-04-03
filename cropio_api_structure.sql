@@ -63,6 +63,7 @@ CREATE TABLE agro_operations (
     planned_end_date date,
     operation_type character varying(255),
     operation_subtype character varying(255),
+    work_type_id integer,
     status character varying(255),
     completed_datetime timestamp without time zone,
     harvested_weight double precision,
@@ -601,6 +602,35 @@ CREATE TABLE work_record_machine_region_mapping_items (
 
 ALTER TABLE work_record_machine_region_mapping_items ADD PRIMARY KEY (id);
 
+CREATE TABLE work_type_groups (
+    id integer NOT NULL,
+    name character varying(255),
+    standard_name character varying(255),
+    description character varying,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
 
+ALTER TABLE work_type_groups ADD PRIMARY KEY (id);
+
+CREATE TABLE work_types (
+    id integer NOT NULL,
+    work_type_group_id integer NOT NULL,
+    name character varying(255),
+    agri boolean DEFAULT false,
+    application boolean DEFAULT false,
+    sowing boolean DEFAULT false,
+    harvesting boolean DEFAULT false,
+    soil boolean DEFAULT false,
+    standard_name character varying(255),
+    hidden boolean DEFAULT false,
+    description character varying,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE work_types ADD PRIMARY KEY (id);
 
 

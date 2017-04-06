@@ -633,4 +633,26 @@ CREATE TABLE work_types (
 
 ALTER TABLE work_types ADD PRIMARY KEY (id);
 
+CREATE TABLE machine_task_field_mapping_items (
+    id integer NOT NULL,
+    machine_task_id integer NOT NULL,
+    field_id integer NOT NULL,
+    covered_area double precision DEFAULT 0 NOT NULL,
+    work_area double precision DEFAULT 0 NOT NULL,
+    covered_area_hourly json DEFAULT '[]'::json NOT NULL,
+    work_area_hourly json DEFAULT '[]'::json NOT NULL,
+    work_distance double precision DEFAULT 0 NOT NULL,
+    work_distance_hourly json DEFAULT '[]'::json NOT NULL,
+    work_duration double precision DEFAULT 0 NOT NULL,
+    work_duration_hourly json DEFAULT '[]'::json NOT NULL,
+    work_timetable json DEFAULT '[]'::json NOT NULL,
+    manually_defined_covered_area double precision DEFAULT 0 NOT NULL,
+    covered_area_by_track double precision DEFAULT 0 NOT NULL,
+    covered_area_by_track_hourly json DEFAULT '[]'::json NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE machine_task_field_mapping_items ADD PRIMARY KEY (id);
+
 

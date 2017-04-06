@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/cropio/cropio-ruby.git
-  revision: d339f09c83f21c783c27cf24f33edcef6b0c3b46
+  revision: 27fc1419eaca2914c0f02685c5660736c4d21e29
   specs:
-    cropio-ruby (0.5.1)
+    cropio-ruby (0.6)
       json
       rest-client
 
@@ -23,7 +23,7 @@ GEM
     arel (7.1.4)
     byebug (9.0.6)
     concurrent-ruby (1.0.5)
-    domain_name (0.5.20170223)
+    domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)

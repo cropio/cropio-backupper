@@ -386,7 +386,8 @@ CREATE TABLE machine_tasks (
     work_duration integer DEFAULT 0,
     work_duration_hourly json DEFAULT '[]'::json NOT NULL,
     work_timetable json DEFAULT '[]'::json NOT NULL,
-    season integer NOT NULL
+    season integer NOT NULL,
+    work_type_id integer
 );
 
 ALTER TABLE machine_tasks ADD PRIMARY KEY (id);

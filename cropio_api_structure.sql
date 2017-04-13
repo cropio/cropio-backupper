@@ -656,4 +656,75 @@ CREATE TABLE machine_task_field_mapping_items (
 
 ALTER TABLE machine_task_field_mapping_items ADD PRIMARY KEY (id);
 
+CREATE TABLE alert_types (
+    id integer NOT NULL,
+    alert_type character varying(255),
+    name character varying(255),
+    priority character varying(255),
+    description character varying,
+    additional_info character varying,
+    archived boolean DEFAULT false,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE alert_types ADD PRIMARY KEY (id);
+
+CREATE TABLE alerts (
+    id integer NOT NULL,
+    alert_type_id integer NOT NULL,
+    alertable_id integer NOT NULL,
+    event_start_time timestamp without time zone NOT NULL,
+    status character varying(255),
+    description character varying,
+    responsible_person_id integer,
+    created_by_user_id integer,
+    event_stop_time timestamp without time zone,
+    alert_closed_at timestamp without time zone,
+    alertable_type character varying(255),
+    automatic_alert_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE alerts ADD PRIMARY KEY (id);
+
+CREATE TABLE machine_regions (
+    id integer NOT NULL,
+    name character varying(255),
+    ancestry character varying,
+    description character varying,
+    additional_info character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE machine_regions ADD PRIMARY KEY (id);
+
+CREATE TABLE machine_region_mapping_items (
+    id integer NOT NULL,
+    machine_id integer NOT NULL,
+    machine_region_id integer NOT NULL,
+    date_start date NOT NULL,
+    date_end date,
+    no_date_end boolean DEFAULT false,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE machine_region_mapping_items ADD PRIMARY KEY (id);
+
+CREATE TABLE implement_region_mapping_items (
+    id integer NOT NULL,
+    implement_id integer NOT NULL,
+    machine_region_id integer NOT NULL,
+    date_start date NOT NULL,
+    date_end date,
+    no_date_end boolean DEFAULT false,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE implement_region_mapping_items ADD PRIMARY KEY (id);
+
 

@@ -307,7 +307,8 @@ CREATE TABLE history_items (
     harvesting_date date,
     active boolean DEFAULT true NOT NULL,
     crop_id integer,
-    till_type character varying(255)
+    till_type character varying(255),
+    additional_info character varying
 );
 
 ALTER TABLE history_items ADD PRIMARY KEY (id);

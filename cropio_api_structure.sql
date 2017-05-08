@@ -65,6 +65,7 @@ CREATE TABLE agro_operations (
     operation_subtype character varying(255),
     work_type_id integer,
     status character varying(255),
+    actual_start_datetime timestamp without time zone,
     completed_datetime timestamp without time zone,
     harvested_weight double precision,
     description text,

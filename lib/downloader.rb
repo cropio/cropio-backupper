@@ -2,6 +2,7 @@ require 'active_support'
 require 'active_support/core_ext'
 require 'cropio'
 require_relative '../lib/app'
+require_relative '../lib/logger'
 Dir.glob(App::ROOT + '/lib/models/*', &method(:require))
 
 module Downloader
@@ -15,13 +16,15 @@ module Downloader
       begin
         from_time = App::REDIS.get(model.to_s) || App::START_DOWNLOAD_YEAR
         to_time = end_time_for_downloading_data(from_time)
+        Logger.print_on_same_line "Downloading #{ model.to_s } from Cropio..."
         data_from_api = Object.const_get(model).changes(from_time, to_time.to_s)
         puts "#{DateTime.now.utc.to_s} | #{model.to_s.ljust(35)} | Size: #{data_from_api.size.to_s.ljust(13)} | From: #{from_time} | To: #{to_time}"
         model_class = Object.const_get("Model::#{model}")
 
         ActiveRecord::Base.transaction do
-          data_from_api.each do |rec|
+          data_from_api.each_with_index do |rec, i|
             model_class.create_or_update(rec.attributes)
+            Logger.print_on_same_line "Saving #{i}..."
           end
           remove_deleted_records_in_db(model_class, model)
           App::REDIS.set(model.to_s, to_time)
@@ -53,4 +56,5 @@ module Downloader
     puts e
     exit(1)
   end
+
 end

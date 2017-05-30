@@ -731,4 +731,21 @@ CREATE TABLE implement_region_mapping_items (
 
 ALTER TABLE implement_region_mapping_items ADD PRIMARY KEY (id);
 
+CREATE TABLE inventory_history_items (
+    id integer NOT NULL,
+    historyable_id integer NOT NULL,
+    historyable_type character varying(255),
+    event_start_at timestamp without time zone NOT NULL,
+    reason character varying(255),
+    description character varying(255),
+    available boolean DEFAULT true,
+    hidden boolean DEFAULT false,
+    event_end_at timestamp without time zone,
+    external_id character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE inventory_history_items ADD PRIMARY KEY (id);
+
 

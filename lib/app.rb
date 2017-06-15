@@ -16,7 +16,7 @@ module App
   end
 
   REDIS = Redis.new(host: ENV['REDIS_HOST'])
-  START_DOWNLOAD_YEAR = DateTime.new(ENV.fetch('START_DOWNLOAD_YEAR', 2000).to_i)
+  START_DOWNLOAD_YEAR = Time.new(ENV.fetch('START_DOWNLOAD_YEAR', 2000).to_i)
 
   module_function
 

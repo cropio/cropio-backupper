@@ -419,7 +419,8 @@ CREATE TABLE machines (
     default_implement_id integer,
     additional_info character varying(255),
     avatar_id integer,
-    external_id character varying(255)
+    external_id character varying(255),
+    phone_number character varying(255)
 );
 
 ALTER TABLE machines ADD PRIMARY KEY (id);

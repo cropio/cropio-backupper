@@ -390,7 +390,13 @@ CREATE TABLE machine_tasks (
     work_duration_hourly json DEFAULT '[]'::json NOT NULL,
     work_timetable json DEFAULT '[]'::json NOT NULL,
     season integer NOT NULL,
-    work_type_id integer
+    work_type_id integer,
+    stops_on_road_duration integer DEFAULT 0,
+    stops_on_road_duration_hourly json DEFAULT '[]'::json NOT NULL,
+    stops_on_road_timetable json DEFAULT '[]'::json NOT NULL,
+    movements_on_road_duration integer DEFAULT 0,
+    movements_on_road_duration_hourly json DEFAULT '[]'::json NOT NULL,
+    movements_on_road_timetable json DEFAULT '[]'::json NOT NULL
 );
 
 ALTER TABLE machine_tasks ADD PRIMARY KEY (id);
@@ -656,7 +662,10 @@ CREATE TABLE machine_task_field_mapping_items (
     covered_area_by_track double precision DEFAULT 0 NOT NULL,
     covered_area_by_track_hourly json DEFAULT '[]'::json NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    stops_timetable json DEFAULT '[]'::json NOT NULL,
+    stops_duration double precision DEFAULT 0 NOT NULL,
+    stops_duration_hourly json DEFAULT '[]'::json NOT NULL
 );
 
 ALTER TABLE machine_task_field_mapping_items ADD PRIMARY KEY (id);

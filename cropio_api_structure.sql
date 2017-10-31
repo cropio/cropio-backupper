@@ -391,6 +391,7 @@ CREATE TABLE machine_tasks (
     work_timetable json DEFAULT '[]'::json NOT NULL,
     season integer NOT NULL,
     work_type_id integer,
+    status character varying(255),
     stops_on_road_duration integer DEFAULT 0,
     stops_on_road_duration_hourly json DEFAULT '[]'::json NOT NULL,
     stops_on_road_timetable json DEFAULT '[]'::json NOT NULL,

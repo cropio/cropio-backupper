@@ -20,15 +20,23 @@ module App
 
   module_function
 
+  def login_through_credentials
+    Cropio.credentials = { email: ENV.fetch('CROPIO_LOGIN', ''),
+                           password: ENV.fetch('CROPIO_PASSWORD', '')}
+  end
+
+  def login_through_api_token(api_token)
+    Cropio.api_token = api_token
+  end
+
   def db_connection(options = DB_CONFIG.fetch('db'))
     ActiveRecord::Base.establish_connection(options)
   end
 
   def api_connection
-    email = ENV.fetch('CROPIO_LOGIN', '')
-    password = ENV.fetch('CROPIO_PASSWORD', '')
-    Cropio.credentials = { email: email,
-                           password: password}
+    api_token = ENV.fetch('API_TOKEN', '')
+    return login_through_api_token(api_token) unless api_token.empty?
+    login_through_credentials
   end
 
   db_connection

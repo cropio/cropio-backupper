@@ -9,8 +9,6 @@ Script to create tables in DB — `cropio_api_structure.sql`
 * add required environment variables:
   ```
   REDIS_HOST=localhost
-  CROPIO_LOGIN=
-  CROPIO_PASSWORD=
   DB_NAME=cropio_api
   DB_PORT=5432
   DB_USERNAME=cropio
@@ -18,6 +16,7 @@ Script to create tables in DB — `cropio_api_structure.sql`
   DB_HOST=localhost
   START_DOWNLOAD_YEAR=2015
   ```
+* either `API_TOKEN` or both `CROPIO_LOGIN` and `CROPIO_PASSWORD` can be used to log in
 
 * run `bundle exec rake download_data`
 
@@ -33,6 +32,12 @@ Script to create tables in DB — `cropio_api_structure.sql`
    1. Container launch command example (you must specify logins and passwords in variables)
       ```
       docker run -e "REDIS_HOST=" -e "CROPIO_LOGIN=" -e "CROPIO_PASSWORD=" \
+      -e "DB_NAME=" -e "DB_PORT=" -e "DB_USERNAME=" -e  "DB_PASSWORD=" -e "DB_HOST=" \
+      -e "DOWNLOAD_SLEEP=10" --restart=always cropio/cropio-backupper
+      ```
+      or in case you decide to use `API_TOKEN`
+      ```
+      docker run -e "REDIS_HOST=" -e "API_TOKEN=" \
       -e "DB_NAME=" -e "DB_PORT=" -e "DB_USERNAME=" -e  "DB_PASSWORD=" -e "DB_HOST=" \
       -e "DOWNLOAD_SLEEP=10" --restart=always cropio/cropio-backupper
       ```

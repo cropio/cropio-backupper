@@ -778,4 +778,26 @@ CREATE TABLE automatic_alerts (
 
 ALTER TABLE automatic_alerts ADD PRIMARY KEY (id);
 
+CREATE TABLE photos (
+    id integer NOT NULL,
+    photoable_id integer NOT NULL,
+    photoable_type character varying(255),
+    name character varying(255),
+    photo json DEFAULT '{}'::json NOT NULL,
+    description text,
+    md5 character varying,
+    file_size integer,
+    longitude double precision,
+    latitude double precision,
+    altitude double precision,
+    image_direction integer,
+    created_by_user_at timestamp without time zone NOT NULL,
+    additional_info character varying,
+    external_id character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE photos ADD PRIMARY KEY (id);
+
 

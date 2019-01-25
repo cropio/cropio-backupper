@@ -126,8 +126,7 @@ ALTER TABLE chemicals ADD PRIMARY KEY (id);
 
 CREATE TABLE crops (
     id integer NOT NULL,
-    company_id integer,
-    custom_name character varying(255),
+    name character varying(255),
     short_name character varying(255),
     standard_name character varying(255),
     created_at timestamp without time zone NOT NULL,

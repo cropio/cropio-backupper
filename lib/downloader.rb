@@ -9,6 +9,8 @@ Dir.glob(App::ROOT + '/lib/models/*', &method(:require))
 module Downloader
   include Cropio::Resources
 
+  MODELS_WITHOUT_CLEANING_IN_LOCAL_DB = %i[Version]
+
   module_function
 
   def download_all_data
@@ -29,7 +31,11 @@ module Downloader
             model_class.create_or_update(rec.attributes)
             Logger.print_on_same_line "Saving #{i}..."
           end
-          remove_deleted_records_in_db(model_class, model)
+
+          unless MODELS_WITHOUT_CLEANING_IN_LOCAL_DB.include?(model)
+            remove_deleted_records_in_db(model_class, model)
+          end
+
           App::REDIS.set(model.to_s, to_time)
         end
       rescue Exception => e
@@ -48,7 +54,7 @@ module Downloader
   end
 
   def end_time_for_downloading_data(from_time)
-    supposed_time = from_time.to_time + 1.year
+    supposed_time = from_time.to_time + 1.month
     return Time.now if supposed_time > Time.now
     supposed_time
   end

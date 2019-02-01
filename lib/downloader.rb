@@ -54,7 +54,7 @@ module Downloader
   end
 
   def end_time_for_downloading_data(from_time)
-    supposed_time = from_time.to_time + 1.month
+    supposed_time = from_time.to_time + App::download_period
     return Time.now if supposed_time > Time.now
     supposed_time
   end

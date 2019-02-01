@@ -15,6 +15,7 @@ Script to create tables in DB — `cropio_api_structure.sql`
   DB_PASSWORD=cropio
   DB_HOST=localhost
   START_DOWNLOAD_YEAR=2015
+  DOWNLOAD_PERIOD=year (year by default, you can choose: hour, day, week, month, year)
   ```
 * either `API_TOKEN` or both `CROPIO_LOGIN` and `CROPIO_PASSWORD` can be used to log in
 

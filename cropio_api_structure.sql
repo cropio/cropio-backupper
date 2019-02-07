@@ -518,7 +518,8 @@ CREATE TABLE users (
     additional_info character varying,
     status character varying DEFAULT 'user'::character varying NOT NULL,
     units_table json DEFAULT '{"length":"km","area":"ha","weight":"tonn","machinery_weight":"kg","volume":"liter","tank_volume":"liter","productivity":"centner_per_ha","speed":"km_per_hour","temperature":"celsius","precipitation_level":"mm","water_rate":"liter_per_ha","fuel_consumption":"liter_per_100km","short_length":"m","depth":"cm","row_spacing":"cm","plant_spacing":"cm"}'::json,
-    external_id character varying(255)
+    external_id character varying(255),
+    rfid character varying(255)
 );
 
 ALTER TABLE users ADD PRIMARY KEY (id);

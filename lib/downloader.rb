@@ -15,7 +15,7 @@ module Downloader
 
   def download_all_data
     resources = Cropio::Resources.constants.select { |c| Cropio::Resources.const_get(c).is_a? Class }
-    resources.each do |model|
+    resources.sort.each do |model|
       begin
         from_time = App::REDIS.get(model.to_s) || App::START_DOWNLOAD_YEAR
         to_time = end_time_for_downloading_data(from_time)

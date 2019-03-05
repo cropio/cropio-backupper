@@ -800,4 +800,28 @@ CREATE TABLE photos (
 
 ALTER TABLE photos ADD PRIMARY KEY (id);
 
+CREATE TABLE soil_tests (
+    id integer NOT NULL,
+    field_id integer NOT NULL,
+    made_at date NOT NULL,
+    elements text,
+    description text,
+    attached_file character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE soil_tests ADD PRIMARY KEY (id);
+
+CREATE TABLE soil_test_samples (
+    id integer NOT NULL,
+    soil_test_id integer NOT NULL,
+    lonlat geography(Point,4326),
+    elements json DEFAULT '{}'::json,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE soil_test_samples ADD PRIMARY KEY (id);
+
 

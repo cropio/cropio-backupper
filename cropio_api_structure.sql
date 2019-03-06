@@ -277,7 +277,8 @@ CREATE TABLE harvest_weighings (
     manually_set_track_length boolean DEFAULT false NOT NULL,
     created_by_user_id integer,
     brutto_weight double precision,
-    season integer NOT NULL
+    season integer NOT NULL,
+    external_id character varying(255)
 );
 
 ALTER TABLE harvest_weighings ADD PRIMARY KEY (id);

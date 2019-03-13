@@ -29,7 +29,7 @@ CREATE TABLE agri_work_plans (
     planned_start_date date NOT NULL,
     planned_end_date date NOT NULL,
     planned_water_rate double precision DEFAULT 0 NOT NULL,
-    additional_info character varying(255),
+    additional_info character varying,
     description text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -37,7 +37,10 @@ CREATE TABLE agri_work_plans (
     planned_row_spacing double precision,
     planned_depth double precision,
     planned_speed double precision,
-    planned_plant_spacing double precision
+    planned_plant_spacing double precision,
+    work_type_id integer NOT NULL,
+    groupable_id integer NOT NULL,
+    groupable_type character varying
 );
 
 ALTER TABLE agri_work_plans ADD PRIMARY KEY (id);

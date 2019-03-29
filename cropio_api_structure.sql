@@ -749,14 +749,14 @@ ALTER TABLE implement_region_mapping_items ADD PRIMARY KEY (id);
 CREATE TABLE inventory_history_items (
     id integer NOT NULL,
     historyable_id integer NOT NULL,
-    historyable_type character varying(255),
+    historyable_type character varying,
     event_start_at timestamp without time zone NOT NULL,
     reason character varying(255),
-    description character varying(255),
+    description character varying,
     available boolean DEFAULT true,
     hidden boolean DEFAULT false,
     event_end_at timestamp without time zone,
-    external_id character varying(255),
+    external_id character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -828,4 +828,144 @@ CREATE TABLE soil_test_samples (
 
 ALTER TABLE soil_test_samples ADD PRIMARY KEY (id);
 
+CREATE TABLE maintenance_types
+(
+  id integer NOT NULL,
+  maintenance_type_group_id integer NOT NULL,
+  name character varying,
+  standard_name character varying,
+  external_id character varying,
+  hidden boolean NOT NULL DEFAULT false,
+  description text,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL
+);
 
+ALTER TABLE maintenance_types ADD PRIMARY KEY (id);
+
+CREATE TABLE maintenance_type_groups
+(
+  id integer NOT NULL,
+  name character varying,
+  standard_name character varying,
+  external_id character varying,
+  description text,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE maintenance_type_groups ADD PRIMARY KEY (id);
+
+CREATE TABLE maintenance_records
+(
+  id integer NOT NULL,
+  maintainable_id integer NOT NULL,
+  maintainable_type character varying(255) NOT NULL,
+  start_time timestamp without time zone NOT NULL,
+  end_time timestamp without time zone NOT NULL,
+  description text,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL,
+  repair_stage character varying,
+  mileage integer,
+  motohours integer,
+  status character varying NOT NULL DEFAULT 'planned'::character varying,
+  maintenance_plan_id integer
+);
+
+ALTER TABLE maintenance_records ADD PRIMARY KEY (id);
+
+CREATE TABLE maintenance_record_rows
+(
+  id integer NOT NULL,
+  maintenance_record_id integer NOT NULL,
+  maintenance_type_id integer NOT NULL,
+  repair_stage text,
+  description text,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE maintenance_record_rows ADD PRIMARY KEY (id);
+
+CREATE TABLE spare_part_manufacturers
+(
+  id integer NOT NULL,
+  name character varying NOT NULL,
+  external_id character varying,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE spare_part_manufacturers ADD PRIMARY KEY (id);
+
+CREATE TABLE spare_parts
+(
+  id integer NOT NULL,
+  spare_part_manufacturer_id bigint NOT NULL,
+  name character varying NOT NULL,
+  part_number character varying NOT NULL,
+  description text,
+  external_id character varying,
+  additional_info character varying,
+  archived boolean NOT NULL DEFAULT false,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE spare_parts ADD PRIMARY KEY (id);
+
+CREATE TABLE maintenance_plan_row_spare_part_mapping_items
+(
+  id integer NOT NULL,
+  maintenance_plan_row_id bigint NOT NULL,
+  spare_part_id bigint NOT NULL,
+  quantity integer NOT NULL,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE maintenance_plan_row_spare_part_mapping_items ADD PRIMARY KEY (id);
+
+CREATE TABLE maintenance_record_row_spare_part_mapping_items
+(
+  id integer NOT NULL,
+  maintenance_record_row_id bigint NOT NULL,
+  spare_part_id bigint NOT NULL,
+  quantity integer NOT NULL,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE maintenance_record_row_spare_part_mapping_items ADD PRIMARY KEY (id);
+
+CREATE TABLE maintenance_plans
+(
+  id integer NOT NULL,
+  plan_type character varying NOT NULL,
+  name text NOT NULL,
+  description text,
+  external_id character varying,
+  settings jsonb DEFAULT '{}'::jsonb,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL,
+  responsible_id integer
+);
+
+ALTER TABLE maintenance_plans ADD PRIMARY KEY (id);
+
+CREATE TABLE maintenance_plan_rows
+(
+  id integer NOT NULL,
+  maintenance_plan_id integer NOT NULL,
+  maintenance_type_id integer NOT NULL,
+  mileage integer,
+  motohours integer,
+  "interval" integer,
+  description text,
+  external_id character varying,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE maintenance_plan_rows ADD PRIMARY KEY (id);

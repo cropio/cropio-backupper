@@ -6,7 +6,7 @@ gem 'pg'
 gem 'activerecord', '~> 5.0'
 gem 'activesupport', '~> 5.0'
 gem 'oj'
-gem 'cropio-ruby', '~> 0.14'
+gem 'cropio-ruby', '~> 0.15'
 gem 'redis', '~>3.2'
 gem 'rake'
 

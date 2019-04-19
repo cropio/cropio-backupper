@@ -3,18 +3,17 @@ require 'active_support/core_ext'
 require 'cropio'
 require_relative '../lib/app'
 require_relative '../lib/logger'
-require 'byebug'
 Dir.glob(App::ROOT + '/lib/models/*', &method(:require))
 
 module Downloader
   include Cropio::Resources
 
   MODELS_WITHOUT_CLEANING_IN_LOCAL_DB = %i[Version]
+  DISABLED_MODELS = %i[SatelliteImage Version]
 
   module_function
 
   def download_all_data
-    resources = Cropio::Resources.constants.select { |c| Cropio::Resources.const_get(c).is_a? Class }
     resources.sort.each do |model|
       begin
         from_time = App::REDIS.get(model.to_s) || App::START_DOWNLOAD_YEAR
@@ -32,9 +31,7 @@ module Downloader
             Logger.print_on_same_line "Saving #{i}..."
           end
 
-          unless MODELS_WITHOUT_CLEANING_IN_LOCAL_DB.include?(model)
-            remove_deleted_records_in_db(model_class, model)
-          end
+          remove_deleted_records_in_db(model_class, model)
 
           App::REDIS.set(model.to_s, to_time)
         end
@@ -45,11 +42,22 @@ module Downloader
     end
   end
 
+  def resources
+    resources = Cropio::Resources
+      .constants
+      .select { |c| Cropio::Resources.const_get(c).is_a? Class }
+
+    resources - DISABLED_MODELS + App::ADDITIONAL_MODELS
+  end
+
   def remove_deleted_records_in_db(model_class, model)
+    return if MODELS_WITHOUT_CLEANING_IN_LOCAL_DB.include?(model)
+
     db_ids = model_class.all.pluck(:id)
     cropio_ids = Object.const_get(model).ids
     ids_to_remove = db_ids - cropio_ids
     return if ids_to_remove.empty?
+
     model_class.where(id: ids_to_remove).delete_all
   end
 

@@ -18,6 +18,7 @@ module App
 
   REDIS = Redis.new(host: ENV['REDIS_HOST'])
   START_DOWNLOAD_YEAR = Time.new(ENV.fetch('START_DOWNLOAD_YEAR', 2000).to_i)
+  ADDITIONAL_MODELS = ENV.fetch('ADDITIONAL_MODELS', '').split(',').map(&:to_sym)
 
   module_function
 
@@ -47,7 +48,7 @@ module App
     return login_through_api_token(api_token) unless api_token.empty?
     login_through_credentials
   end
-
+  
   db_connection
   api_connection
 end

@@ -969,3 +969,126 @@ CREATE TABLE maintenance_plan_rows
 );
 
 ALTER TABLE maintenance_plan_rows ADD PRIMARY KEY (id);
+
+CREATE TABLE counterparties
+(
+    id integer NOT NULL,
+    first_name character varying,
+    middle_name character varying,
+    last_name character varying,
+    identification_code character varying,
+    passport_code character varying,
+    phone_number character varying,
+    email character varying,
+    passport_issuing_date date,
+    passport_issued_by text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    passport_issuing_date_presence boolean NOT NULL DEFAULT false,
+    external_id character varying,
+    street character varying,
+    region character varying,
+    locality character varying,
+    district character varying,
+    house_number character varying,
+    postcode character varying,
+    counterparty_type character varying
+);
+
+ALTER TABLE counterparties ADD PRIMARY KEY (id);
+
+CREATE TABLE field_shape_land_parcel_mapping_items
+(
+    id integer NOT NULL,
+    field_shape_id integer NOT NULL,
+    land_parcel_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE field_shape_land_parcel_mapping_items ADD PRIMARY KEY (id);
+
+CREATE TABLE land_documents
+(
+    id integer NOT NULL,
+    document_date date NOT NULL,
+    document_type character varying(255) NOT NULL,
+    agent character varying(255) NOT NULL,
+    start_date date NOT NULL,
+    end_date date,
+    additional_info character varying(255),
+    description text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    document_number character varying,
+    document_status character varying,
+    external_id character varying,
+    price integer,
+    currency character varying,
+    document_subtype character varying,
+    document_version character varying,
+    normative_monetary_value integer,
+    year_of_nmv integer,
+    nmv_currency character varying,
+    share_of_land integer,
+    price_per_year double precision,
+    price_per_year_currency character varying,
+    location character varying,
+    ownership_of_land_type character varying
+);
+
+ALTER TABLE land_documents ADD PRIMARY KEY (id);
+
+CREATE TABLE land_document_land_parcel_mapping_items
+(
+    id integer NOT NULL,
+    land_document_id integer NOT NULL,
+    land_parcel_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    land_type character varying,
+    external_id character varying
+);
+
+ALTER TABLE land_document_land_parcel_mapping_items ADD PRIMARY KEY (id);
+
+CREATE TABLE land_parcels
+(
+    id integer NOT NULL,
+    field_group_id integer NOT NULL,
+    cadastral_number character varying(255),
+    cadastral_area double precision NOT NULL DEFAULT 0,
+    calculated_area double precision NOT NULL DEFAULT 0,
+    cadastral_price double precision,
+    permitted_use text,
+    address character varying(255),
+    region character varying(255),
+    country_code character varying(255),
+    geo_json text NOT NULL,
+    additional_info character varying(255),
+    description text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    planned_action character varying,
+    registration_number character varying,
+    subadministrative_area_name character varying,
+    village_council character varying,
+    in_archive boolean DEFAULT false,
+    external_id character varying
+);
+
+ALTER TABLE land_parcels ADD PRIMARY KEY (id);
+
+CREATE TABLE protected_documents
+(
+    id integer NOT NULL,
+    name character varying,
+    description text,
+    document_url character varying,
+    documentable_id integer NOT NULL,
+    documentable_type character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE protected_documents ADD PRIMARY KEY (id);

@@ -16,10 +16,13 @@ Script to create tables in DB — `cropio_api_structure.sql`
   DB_HOST=localhost
   START_DOWNLOAD_YEAR=2015
   DOWNLOAD_PERIOD=year (year by default, you can choose: hour, day, week, month, year)
-  ```
+  ``` 
 * either `API_TOKEN` or both `CROPIO_LOGIN` and `CROPIO_PASSWORD` can be used to log in
 
 * run `bundle exec rake download_data`
+
+## Additinal info
+* `SatelliteImage` and `Version` are heavy and rarely used objects and disabled for downloading by default, but you can set env variable to turn on downloading `ADDITIONAL_MODELS=SatelliteImage,Version`
 
 ## Launch using Docker
 

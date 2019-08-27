@@ -1092,3 +1092,13 @@ CREATE TABLE protected_documents
 );
 
 ALTER TABLE protected_documents ADD PRIMARY KEY (id);
+
+CREATE TABLE productivity_estimate_histories
+(
+    id integer NOT NULL,
+    field_id integer,
+    year integer NOT NULL,
+    estimate_history json DEFAULT '{}'::json,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+)

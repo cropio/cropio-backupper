@@ -1101,4 +1101,6 @@ CREATE TABLE productivity_estimate_histories
     estimate_history json DEFAULT '{}'::json,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
-)
+);
+
+ALTER TABLE productivity_estimate_histories ADD PRIMARY KEY (id);

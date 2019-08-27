@@ -15,10 +15,10 @@ GEM
     arel (9.0.0)
     byebug (11.0.1)
     concurrent-ruby (1.1.5)
-    cropio-ruby (0.17)
+    cropio-ruby (0.18)
       json
       rest-client (~> 2.1.0rc1)
-    domain_name (0.5.20180417)
+    domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     http-accept (1.7.0)
     http-cookie (1.0.3)
@@ -31,11 +31,11 @@ GEM
     mime-types-data (3.2019.0331)
     minitest (5.11.3)
     netrc (0.11.0)
-    oj (3.7.12)
+    oj (3.9.0)
     pg (1.1.4)
-    rake (12.3.2)
+    rake (12.3.3)
     redis (3.3.5)
-    rest-client (2.1.0.rc1)
+    rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -54,7 +54,7 @@ DEPENDENCIES
   activerecord (~> 5.0)
   activesupport (~> 5.0)
   byebug
-  cropio-ruby (~> 0.17)
+  cropio-ruby (~> 0.18)
   oj
   pg
   rake

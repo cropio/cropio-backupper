@@ -92,7 +92,9 @@ CREATE TABLE agro_operations (
     planned_speed double precision,
     custom_name character varying,
     planned_plant_spacing double precision,
-    external_id character varying(255)
+    external_id character varying(255),
+    fuel_consumption double precision DEFAULT 0 NOT NULL,
+    fuel_consumption_per_ha double precision DEFAULT 0 NOT NULL
 );
 
 ALTER TABLE agro_operations ADD PRIMARY KEY (id);
@@ -220,7 +222,8 @@ CREATE TABLE field_shapes (
     calculated_area double precision NOT NULL,
     legal_area double precision,
     tillable_area double precision,
-    simplified_shape geography(MultiPolygon,4326) NOT NULL,
+    simplified_shape text NOT NULL,
+    shape_simplified_geojson text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     end_time timestamp without time zone,
@@ -1027,11 +1030,11 @@ CREATE TABLE land_documents
     currency character varying,
     document_subtype character varying,
     document_version character varying,
-    normative_monetary_value integer,
+    normative_monetary_value json DEFAULT '[]'::json,
     year_of_nmv integer,
     nmv_currency character varying,
     share_of_land integer,
-    price_per_year double precision,
+    price_per_year json DEFAULT '[]'::json,
     price_per_year_currency character varying,
     location character varying,
     ownership_of_land_type character varying

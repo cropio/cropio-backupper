@@ -403,7 +403,11 @@ CREATE TABLE machine_tasks (
     stops_on_road_timetable json DEFAULT '[]'::json NOT NULL,
     movements_on_road_duration integer DEFAULT 0,
     movements_on_road_duration_hourly json DEFAULT '[]'::json NOT NULL,
-    movements_on_road_timetable json DEFAULT '[]'::json NOT NULL
+    movements_on_road_timetable json DEFAULT '[]'::json NOT NULL,
+    fuel_consumption double precision DEFAULT 0,
+    fuel_consumption_per_ha double precision DEFAULT 0,
+    fuel_consumption_on_road double precision DEFAULT 0,
+    fuel_consumption_on_road_average double precision DEFAULT 0
 );
 
 ALTER TABLE machine_tasks ADD PRIMARY KEY (id);
@@ -673,7 +677,10 @@ CREATE TABLE machine_task_field_mapping_items (
     updated_at timestamp without time zone NOT NULL,
     stops_timetable json DEFAULT '[]'::json NOT NULL,
     stops_duration double precision DEFAULT 0 NOT NULL,
-    stops_duration_hourly json DEFAULT '[]'::json NOT NULL
+    stops_duration_hourly json DEFAULT '[]'::json NOT NULL,
+    fuel_consumption double precision DEFAULT 0,
+    fuel_consumption_per_ha double precision DEFAULT 0,
+    manually_defined_fuel_consumption double precision DEFAULT 0
 );
 
 ALTER TABLE machine_task_field_mapping_items ADD PRIMARY KEY (id);

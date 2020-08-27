@@ -1114,3 +1114,20 @@ CREATE TABLE productivity_estimate_histories
 );
 
 ALTER TABLE productivity_estimate_histories ADD PRIMARY KEY (id);
+
+CREATE TABLE fuel_hourly_data_items
+(
+    id integer NOT NULL,
+    object_type character varying(255),
+    object_id integer NOT NULL,
+    hour_start timestamp without time zone NOT NULL,
+    fuel_consumption double precision,
+    fuel_drain double precision,
+    refuel double precision,
+    data_source_parameter_id integer,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE fuel_hourly_data_items ADD PRIMARY KEY (id);

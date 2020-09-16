@@ -1131,3 +1131,39 @@ CREATE TABLE fuel_hourly_data_items
 );
 
 ALTER TABLE fuel_hourly_data_items ADD PRIMARY KEY (id);
+
+CREATE TABLE productivity_estimates
+(
+    id integer NOT NULL,
+    field_id integer,
+    year integer,
+    estimate_value double precision,
+    estimate_date date,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE productivity_estimates ADD PRIMARY KEY (id);
+
+CREATE TABLE productivity_estimate_peers
+(
+    id integer NOT NULL,
+    productivity_estimate_id integer NOT NULL,
+    year integer NOT NULL,
+    productivity double precision NOT NULL,
+    area double precision NOT NULL,
+    crop character varying(255),
+    variety character varying(255),
+    previous_crop_name character varying(255),
+    previous_crop_standard_name character varying(255),
+    accumulated_precipitations double precision,
+    average_soil_moisture double precision,
+    max_ndvi double precision,
+    sowing_date date,
+    harvesting_date date,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    ndvi_values jsonb NOT NULL DEFAULT '[]'::jsonb
+);
+
+ALTER TABLE productivity_estimate_peers ADD PRIMARY KEY (id);

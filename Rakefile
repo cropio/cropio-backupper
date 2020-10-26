@@ -10,5 +10,5 @@ include Cropio::Resources
 
 desc 'Download data from Cropio'
 task :download_data do
-  Downloader.download_data
+  Downloader.new.download_data
 end

@@ -15,7 +15,7 @@ GEM
     arel (9.0.0)
     byebug (11.0.1)
     concurrent-ruby (1.1.7)
-    cropio-ruby (0.20)
+    cropio-ruby (0.30)
       json
       rest-client (~> 2.1.0rc1)
     domain_name (0.5.20190701)
@@ -54,7 +54,7 @@ DEPENDENCIES
   activerecord
   activesupport
   byebug
-  cropio-ruby (~> 0.18)
+  cropio-ruby (~> 0.3)
   oj
   pg
   rake

@@ -1,39 +1,39 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (5.2.4.4)
-      activesupport (= 5.2.4.4)
-    activerecord (5.2.4.4)
-      activemodel (= 5.2.4.4)
-      activesupport (= 5.2.4.4)
+    activemodel (5.2.6)
+      activesupport (= 5.2.6)
+    activerecord (5.2.6)
+      activemodel (= 5.2.6)
+      activesupport (= 5.2.6)
       arel (>= 9.0)
-    activesupport (5.2.4.4)
+    activesupport (5.2.6)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (9.0.0)
     byebug (11.0.1)
-    concurrent-ruby (1.1.7)
-    cropio-ruby (0.30)
+    concurrent-ruby (1.1.9)
+    cropio-ruby (0.31)
       json
       rest-client (~> 2.1.0rc1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     http-accept (1.7.0)
-    http-cookie (1.0.3)
+    http-cookie (1.0.4)
       domain_name (~> 0.5)
-    i18n (1.8.5)
+    i18n (1.8.11)
       concurrent-ruby (~> 1.0)
-    json (2.3.1)
-    mime-types (3.3.1)
+    json (2.6.1)
+    mime-types (3.4.1)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2020.0512)
-    minitest (5.14.2)
+    mime-types-data (3.2021.1115)
+    minitest (5.14.4)
     netrc (0.11.0)
     oj (3.10.8)
     pg (1.2.3)
-    rake (13.0.1)
+    rake (13.0.6)
     redis (3.3.5)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
@@ -41,11 +41,11 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     thread_safe (0.3.6)
-    tzinfo (1.2.7)
+    tzinfo (1.2.9)
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.7)
+    unf_ext (0.0.8)
 
 PLATFORMS
   ruby
@@ -64,4 +64,4 @@ RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   2.1.2
+   2.2.16

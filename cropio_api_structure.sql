@@ -599,7 +599,7 @@ CREATE TABLE versions (
     whodunnit character varying,
     snapshot_before_change character varying,
     object_changes character varying,
-    created_at timestamp without time zone NOT NULL    
+    created_at timestamp without time zone NOT NULL
 );
 
 ALTER TABLE versions ADD PRIMARY KEY (id);
@@ -1167,3 +1167,81 @@ CREATE TABLE productivity_estimate_peers
 );
 
 ALTER TABLE productivity_estimate_peers ADD PRIMARY KEY (id);
+
+CREATE TABLE fuel_stations
+(
+    id integer NOT NULL,
+    name character varying,
+    description character varying,
+    geo_json text,
+    geometry_type character varying(255),
+    additional jsonb DEFAULT '{}'::jsonb,
+    avatar_id integer,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE fuel_stations ADD PRIMARY KEY (id);
+
+CREATE TABLE fuel_types
+(
+    id integer NOT NULL,
+    name character varying,
+    short_name character varying,
+    standard_name character varying,
+    category character varying,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE fuel_types ADD PRIMARY KEY (id);
+
+CREATE TABLE fuel_tanks
+(
+    id integer NOT NULL,
+    fuelable_object_type character varying,
+    fuelable_object_id integer,
+    fuel_type_id integer,
+    fuel_pump_id integer,
+    tank_size double precision,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE fuel_tanks ADD PRIMARY KEY (id);
+
+CREATE TABLE fuel_pumps
+(
+    id integer NOT NULL,
+    fuelable_object_type character varying,
+    fuelable_object_id integer,
+    fuel_type_id integer,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE fuel_pumps ADD PRIMARY KEY (id);
+
+CREATE TABLE fuel_movements
+(
+    id integer NOT NULL,
+    object_from_id integer,
+    object_from_type character varying,
+    object_to_id integer,
+    object_to_type character varying,
+    fuel_tank_id integer,
+    fuel_pump_id integer,
+    time_start timestamp without time zone NOT NULL,
+    time_end timestamp without time zone NOT NULL,
+    amount double precision,
+    rfid character varying,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE fuel_movements ADD PRIMARY KEY (id);

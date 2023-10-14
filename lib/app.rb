@@ -6,7 +6,7 @@ require 'yaml'
 module App
   ROOT = File.expand_path('../..', __FILE__)
   DB_CONFIG = YAML.load_file File.join ROOT, 'config', 'database.yml'
-  ALLOWED_PERIODS = %w[hour day week month year]
+  ALLOWED_PERIODS = %w[minute hour day week month year]
 
   DB_CONFIG['db'].update(DB_CONFIG['db']) do |_, v|
     if v.is_a?(String) && v.include?('ENV')

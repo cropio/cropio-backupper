@@ -1,3 +1,14 @@
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'postgis')
+    THEN
+        CREATE EXTENSION postgis;
+        RAISE NOTICE 'PostGIS extension created.';
+    ELSE
+        RAISE NOTICE 'PostGIS extension already exists.';
+    END IF;
+END $$;
+
 CREATE TABLE additional_objects (
     id integer NOT NULL,
     field_group_id integer,
@@ -77,7 +88,7 @@ CREATE TABLE agro_operations (
     covered_area_by_track double precision,
     machine_work_area double precision,
     calculated_work_area_updated_at timestamp without time zone,
-    additional_info character varying(255),
+    additional_info character varying,
     season integer NOT NULL,
     planned_area double precision DEFAULT 0 NOT NULL,
     completed_area double precision DEFAULT 0 NOT NULL,
@@ -85,7 +96,7 @@ CREATE TABLE agro_operations (
     planned_water_rate double precision DEFAULT 0 NOT NULL,
     fact_water_rate double precision DEFAULT 0 NOT NULL,
     agri_work_id integer,
-    operation_number character varying(255),
+    operation_number character varying,
     covered_area_hourly json DEFAULT '{}'::json NOT NULL,
     planned_row_spacing double precision,
     planned_depth double precision,
@@ -315,7 +326,14 @@ CREATE TABLE history_items (
     active boolean DEFAULT true NOT NULL,
     crop_id integer,
     till_type character varying(255),
-    additional_info character varying
+    additional_info character varying,
+    harvested_weight double precision,
+    yield_density double precision,
+    expected_yield double precision,
+    grain_class character varying,
+    grain_humidity double precision,
+    grain_garbage_admixture double precision,
+    external_id character varying(255)
 );
 
 ALTER TABLE history_items ADD PRIMARY KEY (id);
@@ -557,13 +575,13 @@ ALTER TABLE user_role_assignments ADD PRIMARY KEY (id);
 
 CREATE TABLE user_role_permissions (
     id integer NOT NULL,
-    user_role_id integer NOT NULL,
-    access_level character varying(255) NOT NULL,
-    access_for character varying(255) NOT NULL,
-    subject_type character varying(255) NOT NULL,
+    user_role_id integer,
+    access_level character varying(255),
+    access_for character varying(255),
+    subject_type character varying(255),
     subject_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 ALTER TABLE user_role_permissions ADD PRIMARY KEY (id);
@@ -576,7 +594,7 @@ CREATE TABLE weather_history_items (
     temperature_max decimal,
     precipitation decimal,
     snow decimal,
-    field_group_id integer NOT NULL
+    field_group_id integer
 );
 
 ALTER TABLE weather_history_items ADD PRIMARY KEY (id);
@@ -1122,7 +1140,7 @@ CREATE TABLE fuel_hourly_data_items
     object_id integer NOT NULL,
     hour_start timestamp without time zone NOT NULL,
     fuel_consumption double precision,
-    fuel_drain double precision,
+    fuel_drain jsonb DEFAULT '[]'::jsonb,
     refuel double precision,
     data_source_parameter_id integer,
     external_id character varying,
@@ -1245,3 +1263,235 @@ CREATE TABLE fuel_movements
 );
 
 ALTER TABLE fuel_movements ADD PRIMARY KEY (id);
+
+CREATE TABLE growth_scales
+(
+    id integer NOT NULL,
+    name character varying,
+    standard_name character varying,
+    localized_name character varying,
+    hidden boolean DEFAULT false,
+    external_id character varying,
+    additional_info character varying,
+    description text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE growth_scales ADD PRIMARY KEY (id);
+
+CREATE TABLE growth_stages
+(
+    id integer NOT NULL,
+    growth_scale_id integer,
+    code character varying,
+    name character varying,
+    localized_name character varying,
+    external_id character varying,
+    additional_info character varying,
+    description text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE growth_stages ADD PRIMARY KEY (id);
+
+CREATE TABLE growth_stage_groups
+(
+    id integer NOT NULL,
+    growth_scale_id integer,
+    name character varying,
+    standard_name character varying,
+    localized_name character varying,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE growth_stage_groups ADD PRIMARY KEY (id);
+
+CREATE TABLE growth_stages_predictions
+(
+    id integer NOT NULL,
+    history_item_id integer,
+    growth_scale_id integer,
+    year integer,
+    prediction_data jsonb DEFAULT '{}'::jsonb,
+    fact_data jsonb DEFAULT '{}'::jsonb,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE growth_stages_predictions ADD PRIMARY KEY (id);
+
+CREATE TABLE scout_report_points
+(
+    id integer NOT NULL,
+    field_scout_report_id integer,
+    growth_stage_id integer,
+    longitude double precision,
+    latitude double precision,
+    scouting_task_point_id integer,
+    additional_info character varying,
+    description text,
+    name character varying,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE scout_report_points ADD PRIMARY KEY (id);
+
+CREATE TABLE scout_report_point_growth_stage_structures
+(
+    id integer NOT NULL,
+    scout_report_point_id integer,
+    growth_stage_structure_mapping_items jsonb DEFAULT '{}'::jsonb,
+    additional_info character varying,
+    description text,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE scout_report_point_growth_stage_structures ADD PRIMARY KEY (id);
+
+CREATE TABLE scout_report_point_issues
+(
+    id integer NOT NULL,
+    scout_report_point_id integer,
+    plant_threat_id integer,
+    threat_level character varying,
+    threat_stage character varying,
+    amount double precision,
+    damaged_area double precision,
+    economic_damage_threshold_exceeded boolean DEFAULT false,
+    amount_per_100_plants double precision,
+    number_pests_in_trap integer,
+    affected_plants double precision,
+    herbicide_efficiency double precision,
+    additional_info character varying,
+    description text,
+    longitude double precision,
+    latitude double precision,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE scout_report_point_issues ADD PRIMARY KEY (id);
+
+CREATE TABLE scout_report_point_issue_plant_parts
+(
+    id integer NOT NULL,
+    scout_repscout_report_point_issue_id  integer,
+    plant_part character varying,
+    progress double precision,
+    spread double precision,
+    additional_info character varying,
+    description text,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE scout_report_point_issue_plant_parts ADD PRIMARY KEY (id);
+
+CREATE TABLE scout_report_point_measurements
+(
+    id integer NOT NULL,
+    scout_report_point_id integer,
+    measurement_type character varying,
+    density_of_planting_linear_row_width double precision,
+    density_of_planting_linear_length_of_row double precision,
+    density_of_planting_linear_rows_count integer,
+    density_of_planting_linear_plants_in_rows integer,
+    rate_of_tillers_number_of_stems integer,
+    rate_of_tillers_number_of_plants integer,
+    rate_of_productive_tillers_number_of_heads integer,
+    rate_of_productive_tillers_number_of_plants integer,
+    yield_forecast_head_number double precision,
+    yield_forecast_kernels_per_head integer,
+    yield_forecast_thousand_grain_weight double precision,
+    density_of_planting_square double precision,
+    stems_density double precision,
+    productive_stems_density double precision,
+    plant_height double precision,
+    ground_cover double precision,
+    ears_count double precision,
+    plants_density_estimate double precision,
+    field_germination double precision,
+    harvesting_humidity double precision,
+    productivity double precision,
+    longitude double precision,
+    latitude double precision,
+    calculated_value double precision,
+    additional_info character varying,
+    description text,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE scout_report_point_measurements ADD PRIMARY KEY (id);
+
+CREATE TABLE scouting_tasks
+(
+    id integer NOT NULL,
+    field_id integer,
+    responsible_id integer,
+    author_id integer,
+    start_time timestamp without time zone NOT NULL,
+    end_time timestamp without time zone NOT NULL,
+    description text,
+    status character varying,
+    image_type character varying,
+    image_date date,
+    image_source_sign character varying,
+    scout_report_template_id integer,
+    season integer,
+    agro_operation_id integer,
+    automatic_scouting_task_id integer,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE scouting_tasks ADD PRIMARY KEY (id);
+
+CREATE TABLE growth_stage_structure_mapping_items
+(
+    id integer NOT NULL,
+    growth_scale_name character varying,
+    growth_stage_group_name character varying,
+    growth_stage_name character varying,
+    growth_stage_id integer,
+    growth_stage_fraction integer,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE growth_stage_structure_mapping_items ADD PRIMARY KEY (id);
+
+-- ----------------------------------------------------
+--
+-- CREATING UNIQUE INDEX FOR ID COLUMNS IN EVERY TABLE
+--
+-- ----------------------------------------------------
+
+DO $$
+DECLARE
+    rec record;
+    index_name text;
+BEGIN
+    FOR rec IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' and table_type = 'BASE TABLE' and table_name <> 'spatial_ref_sys')
+    LOOP
+        index_name := rec.table_name || '_id_unique_idx';
+
+        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = index_name)
+        THEN
+            EXECUTE format('CREATE UNIQUE INDEX %I ON public.%I (id);', index_name, rec.table_name);
+        END IF;
+    END LOOP;
+END $$;

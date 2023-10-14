@@ -2,7 +2,7 @@ require 'active_record'
 require_relative 'basic_model'
 
 module Model
-  class MaintenancePlanRowSparePartMappingItem < ActiveRecord::Base
+  class ScoutReportPointIssuePlantPart < ActiveRecord::Base
     extend BasicModel
   end
 end

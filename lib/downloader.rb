@@ -1,4 +1,6 @@
 require 'active_support'
+require 'activerecord-import/base'
+require 'byebug'
 require 'active_support/core_ext'
 require 'cropio'
 require_relative '../lib/app'
@@ -8,14 +10,15 @@ Dir.glob(App::ROOT + '/lib/models/*', &method(:require))
 class Downloader
   include Cropio::Resources
 
-  attr_reader :logger, :processed_model, :cropio_ids, :from_time, :to_time,
-              :processing_history
+  attr_reader :processed_model, :from_time, :to_time,
+              :processing_history, :logger, :cropio_ids
 
   MODELS_WITHOUT_CLEANING_IN_LOCAL_DB = %i[Version].freeze
-  DISABLED_MODELS = %i[SatelliteImage Version].freeze
+  DISABLED_MODELS = %i[Version].freeze
 
   def download_all_data
     resources.sort.each do |model|
+    #[:FuelHourlyDataItem].sort.each do |model|
       begin
         @processed_model = Object.const_get(model)
         reset_processing_status
@@ -31,16 +34,33 @@ class Downloader
         model_class = Object.const_get("Model::#{model}")
 
         ActiveRecord::Base.transaction do
+          needed_attributes = model_class.new.attributes
+          models_records_to_import = []
+
           data_from_api.each_with_index do |rec, i|
-            model_class.create_or_update(rec.attributes)
-            logger.print_on_same_line "Saving #{i}..."
+            selected_attr = rec.attributes.select { |k, _v| needed_attributes.include?(k) }
+            models_records_to_import << selected_attr
+            logger.print_on_same_line "Creating #{i}..."
           end
 
+          logger.print_on_same_line "Importing data to database..."
+          i = 1
+          models_records_to_import.each_slice(1000) do |batch|
+            model_class.upsert_all(batch, unique_by: :id)
+            logger.print_on_same_line "batch #{i}"
+            i += 1
+          end
+
+	        logger.print_on_same_line "Remove deleted records..."
           remove_deleted_records_in_db(model_class)
           App::REDIS.set(model_name.to_s, to_time)
 
+	        logger.print_on_same_line "Checking data integrity..."
           check_data_integrity(model_class)
+
+          logger.print_on_same_line "All done..."
         end
+
       rescue Exception => e
         logger.print "Problem with model #{model.to_s}"
         logger.print e.message

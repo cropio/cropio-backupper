@@ -1,110 +1,48 @@
-require 'active_support'
-require 'activerecord-import/base'
-require 'byebug'
-require 'active_support/core_ext'
-require 'cropio'
-require_relative '../lib/app'
-require_relative '../lib/logger'
+require_relative 'app'
+require_relative 'logger'
+require_relative 'resource_fetcher'
+require_relative 'data_integrity_checker'
+require_relative 'data_importer'
+
 Dir.glob(App::ROOT + '/lib/models/*', &method(:require))
 
 class Downloader
   include Cropio::Resources
 
-  attr_reader :processed_model, :from_time, :to_time,
-              :processing_history, :logger, :cropio_ids
-
-  MODELS_WITHOUT_CLEANING_IN_LOCAL_DB = %i[Version].freeze
-  DISABLED_MODELS = %i[Version].freeze
+  attr_accessor :processed_model, :from_time, :to_time,
+              :processing_history, :logger
 
   def download_all_data
-    resources.sort.each do |model|
-    #[:FuelHourlyDataItem].sort.each do |model|
+    ResourceFetcher.resources.sort.each do |model|
       begin
         @processed_model = Object.const_get(model)
-        reset_processing_status
-
-        logger.print_on_same_line "Downloading #{model} from Cropio... "\
-                                  "From: #{from_time} To: #{to_time}"
-
-        data_from_api = @processed_model.changes(from_time.to_s, to_time.to_s)
-        logger.print "#{model_name.to_s.ljust(45)} | Size: "\
-                      "#{data_from_api.size.to_s.ljust(13)} | "\
-                      "From: #{from_time} | To: #{to_time}"
-
         model_class = Object.const_get("Model::#{model}")
+        update_processing_status
 
+        data = ResourceFetcher.fetch_data_for_model(model, from_time, to_time, logger)
         ActiveRecord::Base.transaction do
-          needed_attributes = model_class.new.attributes
-          models_records_to_import = []
-
-          data_from_api.each_with_index do |rec, i|
-            selected_attr = rec.attributes.select { |k, _v| needed_attributes.include?(k) }
-            models_records_to_import << selected_attr
-            logger.print_on_same_line "Creating #{i}..."
-          end
-
-          logger.print_on_same_line "Importing data to database..."
-          i = 1
-          models_records_to_import.each_slice(1000) do |batch|
-            model_class.upsert_all(batch, unique_by: :id)
-            logger.print_on_same_line "batch #{i}"
-            i += 1
-          end
-
-	        logger.print_on_same_line "Remove deleted records..."
-          remove_deleted_records_in_db(model_class)
-          App::REDIS.set(model_name.to_s, to_time)
-
-	        logger.print_on_same_line "Checking data integrity..."
-          check_data_integrity(model_class)
-
-          logger.print_on_same_line "All done..."
+          DataImporter.new(model_class, logger, data).import_data
+	        DataIntegrityChecker.new(processed_model, processing_history, logger).check(model_class)
+          App::REDIS.set(model_name, to_time)
         end
-
       rescue Exception => e
         logger.print "Problem with model #{model.to_s}"
         logger.print e.message
       end
     end
+
+    logger.print "All done..."
   end
 
-  def resources
-    resources =
-      Cropio::Resources
-      .constants
-      .select { |c| Cropio::Resources.const_get(c).is_a? Class }
+  def update_processing_status
+    @processing_history = true
 
-    resources - DISABLED_MODELS + App::ADDITIONAL_MODELS
+    @from_time = start_time_for_downloading_data
+    @to_time = end_time_for_downloading_data
   end
 
-  def remove_deleted_records_in_db(model_class)
-    return if MODELS_WITHOUT_CLEANING_IN_LOCAL_DB.include?(model_name.to_sym)
-
-    db_ids = model_class.all.pluck(:id)
-    ids_to_remove = db_ids - cropio_ids
-    return if ids_to_remove.empty?
-
-    model_class.where(id: ids_to_remove).delete_all
-  end
-
-  def check_data_integrity(model_class)
-    return if processing_history
-
-    db_ids = model_class.all.pluck(:id)
-    ids = cropio_ids - db_ids
-    return if ids.empty?
-
-    logger.print "#{model_name.to_s.ljust(45)} | "\
-                      "There is #{ids.count} records that absent in local DB. "\
-                      'Trying to recreate them...'
-
-    ids.each_with_index do |id, i|
-      rec = @processed_model.find(id)
-      next if rec.nil?
-
-      model_class.create_or_update(rec.attributes)
-      logger.print_on_same_line "ReSaving #{i}..."
-    end
+  def start_time_for_downloading_data
+    App::REDIS.get(model_name) || App::START_DOWNLOAD_YEAR
   end
 
   def end_time_for_downloading_data
@@ -117,24 +55,8 @@ class Downloader
     supposed_time
   end
 
-  def reset_processing_status
-    @processing_history = true
-    @cropio_ids = nil
-
-    @from_time = start_time_for_downloading_data
-    @to_time = end_time_for_downloading_data
-  end
-
-  def start_time_for_downloading_data
-    App::REDIS.get(model_name) || App::START_DOWNLOAD_YEAR
-  end
-
   def model_name
-    @processed_model.name.demodulize
-  end
-
-  def cropio_ids
-    @cropio_ids ||= @processed_model.ids
+    processed_model.name.demodulize
   end
 
   def logger

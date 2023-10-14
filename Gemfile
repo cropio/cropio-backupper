@@ -1,8 +1,9 @@
 source 'https://rubygems.org'
 
-ruby '2.3.1'
+ruby '3.2.2'
 
 gem 'activerecord'
+gem 'activerecord-import'
 gem 'activesupport'
 gem 'cropio-ruby', '~> 0.3'
 gem 'oj'

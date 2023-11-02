@@ -1,11 +1,15 @@
 require 'active_record'
 require 'cropio'
 require 'redis'
+require 'redis/namespace'
 require 'yaml'
+require 'erb'
 
 module App
   ROOT = File.expand_path('../..', __FILE__)
-  DB_CONFIG = YAML.load_file File.join ROOT, 'config', 'database.yml'
+  db_config_path = File.join(ROOT, 'config', 'database.yml')
+  DB_CONFIG = YAML.load(ERB.new(File.read(db_config_path)).result)
+
   ALLOWED_PERIODS = %w[minute hour day week month year]
 
   DB_CONFIG['db'].update(DB_CONFIG['db']) do |_, v|
@@ -16,7 +20,10 @@ module App
     end
   end
 
-  REDIS = Redis.new(host: ENV['REDIS_HOST'])
+  redis_client = Redis.new(host: ENV['REDIS_HOST'])
+  namespace = ENV['DB_SCHEMA'] || 'public'
+  REDIS = Redis::Namespace.new(namespace, redis: redis_client)
+
   START_DOWNLOAD_YEAR = Time.new(ENV.fetch('START_DOWNLOAD_YEAR', 2000).to_i)
   ADDITIONAL_MODELS = ENV.fetch('ADDITIONAL_MODELS', '').split(',').map(&:to_sym)
 
@@ -48,7 +55,7 @@ module App
     return login_through_api_token(api_token) unless api_token.empty?
     login_through_credentials
   end
-  
+
   db_connection
   api_connection
 end

@@ -9,6 +9,8 @@ BEGIN
     END IF;
 END $$;
 
+SET search_path TO cherkizovo, public;
+
 CREATE TABLE additional_objects (
     id integer NOT NULL,
     field_group_id integer,
@@ -1484,14 +1486,18 @@ DO $$
 DECLARE
     rec record;
     index_name text;
+    schema_name text;
 BEGIN
-    FOR rec IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' and table_type = 'BASE TABLE' and table_name <> 'spatial_ref_sys')
+    SELECT current_schema() INTO schema_name;
+
+    FOR rec IN (SELECT table_name FROM information_schema.tables WHERE table_schema = schema_name AND table_type = 'BASE TABLE' AND table_name <> 'spatial_ref_sys')
     LOOP
         index_name := rec.table_name || '_id_unique_idx';
 
-        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = index_name)
+        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = schema_name AND table_name = rec.table_name AND column_name = 'id')
+        AND NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = schema_name AND indexname = index_name)
         THEN
-            EXECUTE format('CREATE UNIQUE INDEX %I ON public.%I (id);', index_name, rec.table_name);
+            EXECUTE format('CREATE UNIQUE INDEX %I ON ' || schema_name || '.%I (id);', index_name, rec.table_name);
         END IF;
     END LOOP;
 END $$;

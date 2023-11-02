@@ -36,6 +36,8 @@ GEM
     pg (1.4.6)
     rake (13.0.6)
     redis (3.3.5)
+    redis-namespace (1.8.2)
+      redis (>= 3.0.4)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
@@ -62,7 +64,8 @@ DEPENDENCIES
   oj
   pg
   rake
-  redis (~> 3.2)
+  redis
+  redis-namespace
 
 RUBY VERSION
    ruby 3.2.2p53

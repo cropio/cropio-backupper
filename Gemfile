@@ -9,7 +9,8 @@ gem 'cropio-ruby', '~> 0.3'
 gem 'oj'
 gem 'pg'
 gem 'rake'
-gem 'redis', '~>3.2'
+gem 'redis'
+gem 'redis-namespace'
 
 group :development do
   gem 'byebug'

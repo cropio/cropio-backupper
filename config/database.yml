@@ -1,11 +1,12 @@
 db:
   adapter: postgresql
   database: ENV['DB_NAME']
-  host: ENV['DB_HOST'] #localhost
-  port: ENV['DB_PORT'] #5432
-  username:  ENV['DB_USERNAME'] #postgres
-  password: ENV['DB_PASSWORD'] #
+  host: ENV['DB_HOST']
+  port: ENV['DB_PORT']
+  username:  ENV['DB_USERNAME']
+  password: ENV['DB_PASSWORD']
   encoding: unicode
   pool: 5
-  schema_search_path: public
+  schema_search_path: "<%= ENV['DB_SCHEMA'] ? "#{ENV['DB_SCHEMA']},public" : 'public' %>"
+
 

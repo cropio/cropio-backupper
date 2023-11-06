@@ -9,7 +9,7 @@ BEGIN
     END IF;
 END $$;
 
-SET search_path TO cherkizovo, public;
+SET search_path TO [you schema there if need], public;
 
 CREATE TABLE additional_objects (
     id integer NOT NULL,
@@ -223,7 +223,10 @@ CREATE TABLE field_scout_reports (
     photo2_lat double precision,
     photo2_lon double precision,
     photo3_lat double precision,
-    photo3_lon double precision
+    photo3_lon double precision,
+    risk_yield_decreasing boolean DEFAULT false NOT NULL,
+    scouting_task_id integer,
+    scout_report_template_id integer
 );
 
 ALTER TABLE field_scout_reports ADD PRIMARY KEY (id);
@@ -1460,6 +1463,34 @@ CREATE TABLE scouting_tasks
 );
 
 ALTER TABLE scouting_tasks ADD PRIMARY KEY (id);
+
+CREATE TABLE scouting_task_points
+(
+    id integer NOT NULL,
+    scouting_task_id integer NOT NULL,
+    name text,
+    description text,
+    latitude double precision,
+    longitude double precision,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE scouting_task_points ADD PRIMARY KEY (id);
+
+CREATE TABLE scout_report_templates
+(
+    id integer NOT NULL,
+    name text,
+    description text,
+    hidden boolean DEFAULT false,
+    external_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+ALTER TABLE scout_report_templates ADD PRIMARY KEY (id);
 
 CREATE TABLE growth_stage_structure_mapping_items
 (

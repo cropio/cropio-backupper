@@ -10,6 +10,8 @@ class DataIntegrityChecker
   end
 
   def check(klass)
+    return if processing_history
+
     remove_deleted_records_in_db(klass)
     check_data_integrity(klass)
   end
@@ -27,8 +29,6 @@ class DataIntegrityChecker
   end
 
   def check_data_integrity(model_class)
-    return if processing_history
-
     db_ids = model_class.all.pluck(:id)
     ids = cropio_ids - db_ids
     return if ids.empty?

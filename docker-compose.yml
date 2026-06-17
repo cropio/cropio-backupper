@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgis/postgis:15-3.4
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-cropio}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-cropio}
+      POSTGRES_DB: ${DB_NAME:-cropio_api}
+      DB_SCHEMA: ${DB_SCHEMA:-public}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # loaded only on first init (when the data volume is empty)
+      - ./cropio_api_structure.sql:/sql/cropio_api_structure.sql:ro
+      - ./docker/init-db.sh:/docker-entrypoint-initdb.d/00-init-db.sh:ro
+    healthcheck:
+      # ready only after the structure SQL has created the tables
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB && psql -U $$POSTGRES_USER -d $$POSTGRES_DB -tAc \"SELECT to_regclass('crops')\" | grep -q crops"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backupper:
+    build: .
+    env_file: .env
+    environment:
+      DB_HOST: db
+      REDIS_HOST: redis
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: on-failure
+
+volumes:
+  pgdata:

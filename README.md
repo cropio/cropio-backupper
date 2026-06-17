@@ -3,6 +3,34 @@ PostgreSQL (including Postgis) and Redis are required to run backupper.
 
 Script to create tables in DB — `cropio_api_structure.sql`
 
+## Launch using Docker Compose (recommended)
+
+This is the easiest way to run the backupper on any OS (macOS, Linux, Windows/WSL2).
+It starts everything for you — the backupper, PostgreSQL (with PostGIS) and Redis —
+so you don't need to install Ruby, PostgreSQL or Redis locally. Only Docker is required.
+
+1. Install [Docker](https://docs.docker.com/get-docker/) (Docker Desktop already includes Compose).
+
+2. Create your config from the template and fill in the values:
+   ```
+   cp .env.example .env
+   ```
+   Edit `.env` and set either `API_TOKEN`, or both `CROPIO_LOGIN` and `CROPIO_PASSWORD`.
+   `DB_HOST` and `REDIS_HOST` are set automatically by Compose — leave them out.
+
+3. Start everything:
+   ```
+   docker compose up --build
+   ```
+   On first run the database schema from `cropio_api_structure.sql` is loaded
+   automatically. The backupper waits until PostgreSQL and Redis are healthy
+   before it starts downloading.
+
+4. Useful commands:
+   * `docker compose logs -f backupper` — follow the backupper logs
+   * `docker compose down` — stop all services (database data is kept in the `pgdata` volume)
+   * `docker compose down -v` — stop and **delete** the database volume (full reset)
+
 ## Launch using rake task
 * install ruby-2.3.1, rubygems, bundler
 * run `bundle install`

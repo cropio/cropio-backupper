@@ -2,3 +2,5 @@
 .idea/
 .bundle/
 .env
+devops-readme.md
+cron.log

@@ -1507,6 +1507,17 @@ CREATE TABLE growth_stage_structure_mapping_items
 
 ALTER TABLE growth_stage_structure_mapping_items ADD PRIMARY KEY (id);
 
+-- Sync checkpoint store: last synced timestamp per model (replaces Redis).
+-- NB: column is `resource_name`, not `model_name` — `model_name` is a reserved
+-- ActiveRecord method and would raise DangerousAttributeError on the model.
+CREATE TABLE sync_states
+(
+    resource_name character varying NOT NULL,
+    synced_until timestamp without time zone NOT NULL
+);
+
+ALTER TABLE sync_states ADD PRIMARY KEY (resource_name);
+
 -- ----------------------------------------------------
 --
 -- CREATING UNIQUE INDEX FOR ID COLUMNS IN EVERY TABLE

@@ -6,6 +6,10 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-cropio}
       POSTGRES_DB: ${DB_NAME:-cropio_api}
       DB_SCHEMA: ${DB_SCHEMA:-public}
+    ports:
+      # expose Postgres on the host so a client (e.g. Postico) can connect.
+      # host port is configurable to avoid clashing with a local Postgres.
+      - "${DB_HOST_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       # loaded only on first init (when the data volume is empty)
@@ -18,26 +22,17 @@ services:
       timeout: 5s
       retries: 20
 
-  redis:
-    image: redis:7-alpine
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-
   backupper:
     build: .
     env_file: .env
     environment:
       DB_HOST: db
-      REDIS_HOST: redis
     depends_on:
       db:
         condition: service_healthy
-      redis:
-        condition: service_healthy
-    restart: on-failure
+    # runs a continuous sync loop (docker/run-loop.sh); keep it alive across
+    # reboots / Docker restarts. Tune the interval with DOWNLOAD_SLEEP in .env.
+    restart: unless-stopped
 
 volumes:
   pgdata:

@@ -30,4 +30,4 @@ COPY . .
 
 RUN bundle install --frozen
 
-CMD ["bundle", "exec", "rake", "download_data"]
+CMD ["bash", "docker/run-loop.sh"]

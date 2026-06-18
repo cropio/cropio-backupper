@@ -23,7 +23,7 @@ class Downloader
         ActiveRecord::Base.transaction do
           DataImporter.new(model_class, logger, data).import_data
 	        DataIntegrityChecker.new(processed_model, processing_history, logger).check(model_class)
-          App::REDIS.set(model_name, to_time)
+          Model::SyncState.mark_synced(model_name, to_time)
         end
       rescue Exception => e
         logger.print "Problem with model #{model.to_s}"
@@ -42,7 +42,7 @@ class Downloader
   end
 
   def start_time_for_downloading_data
-    App::REDIS.get(model_name) || App::START_DOWNLOAD_YEAR
+    Model::SyncState.last_synced_at(model_name) || App::START_DOWNLOAD_YEAR
   end
 
   def end_time_for_downloading_data

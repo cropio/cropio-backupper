@@ -1,4 +1,4 @@
-FROM ruby:3.2.2-buster
+FROM ruby:3.2.2-bookworm
 
 RUN echo 'install: --no-document\nupdate: --no-document' >> /usr/local/etc/gemrc
 
@@ -6,6 +6,7 @@ RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 	bison \
 	libgdbm-dev \
+	libpq-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV RUBYGEMS_VERSION 3.4.10
@@ -27,7 +28,6 @@ WORKDIR /cropio-backupper
 
 COPY . .
 
-RUN bundle update \
-	&& bundle install
+RUN bundle install --frozen
 
-CMD ["bundle", "exec", "rake", "download_data"]
+CMD ["bash", "docker/run-loop.sh"]

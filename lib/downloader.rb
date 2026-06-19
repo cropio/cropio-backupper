@@ -22,8 +22,8 @@ class Downloader
         data = ResourceFetcher.fetch_data_for_model(model, from_time, to_time, logger)
         ActiveRecord::Base.transaction do
           DataImporter.new(model_class, logger, data).import_data
-	        DataIntegrityChecker.new(processed_model, processing_history, logger).check(model_class)
-          App::REDIS.set(model_name, to_time)
+	        DataIntegrityChecker.new(processed_model, processing_history, logger, App::START_DOWNLOAD_YEAR).check(model_class)
+          Model::SyncState.mark_synced(model_name, to_time)
         end
       rescue Exception => e
         logger.print "Problem with model #{model.to_s}"
@@ -41,8 +41,12 @@ class Downloader
     @to_time = end_time_for_downloading_data
   end
 
+  # START_DOWNLOAD_YEAR is a lower bound, not just a fallback: never sync from
+  # before it, even when an older checkpoint exists. This lets raising
+  # START_DOWNLOAD_YEAR skip ahead past stale checkpoints instead of being
+  # ignored (otherwise an old checkpoint marches through all history year by year).
   def start_time_for_downloading_data
-    App::REDIS.get(model_name) || App::START_DOWNLOAD_YEAR
+    [Model::SyncState.last_synced_at(model_name), App::START_DOWNLOAD_YEAR].compact.max
   end
 
   def end_time_for_downloading_data

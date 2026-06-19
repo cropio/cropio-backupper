@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgis/postgis:15-3.4
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-cropio}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-cropio}
+      POSTGRES_DB: ${DB_NAME:-cropio_api}
+      DB_SCHEMA: ${DB_SCHEMA:-public}
+    ports:
+      # expose Postgres on the host so a client (e.g. Postico) can connect.
+      # host port is configurable to avoid clashing with a local Postgres.
+      - "${DB_HOST_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # loaded only on first init (when the data volume is empty)
+      - ./cropio_api_structure.sql:/sql/cropio_api_structure.sql:ro
+      - ./docker/init-db.sh:/docker-entrypoint-initdb.d/00-init-db.sh:ro
+    healthcheck:
+      # ready only after the structure SQL has created the tables
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB && psql -U $$POSTGRES_USER -d $$POSTGRES_DB -tAc \"SELECT to_regclass('crops')\" | grep -q crops"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backupper:
+    build: .
+    env_file: .env
+    environment:
+      DB_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+    # runs a continuous sync loop (docker/run-loop.sh); keep it alive across
+    # reboots / Docker restarts. Tune the interval with DOWNLOAD_SLEEP in .env.
+    restart: unless-stopped
+
+volumes:
+  pgdata:

@@ -3,7 +3,10 @@ require "cropio"
 module ResourceFetcher
   include Cropio::Resources
 
-  DISABLED_MODELS = %i[Version].freeze
+  # Version has no API endpoint. The others expose no working `changes`
+  # endpoint (their `changes` response has no {data, meta} envelope, which
+  # crashes the gem's pagination), so they are skipped during sync.
+  DISABLED_MODELS = %i[SatelliteImage Version WeatherStationsData].freeze
 
   def self.fetch_data_for_model(model, from_time, to_time, logger)
     processed_model = Object.const_get(model)

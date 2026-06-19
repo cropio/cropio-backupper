@@ -1,7 +1,5 @@
 require 'active_record'
 require 'cropio'
-require 'redis'
-require 'redis/namespace'
 require 'yaml'
 require 'erb'
 
@@ -19,10 +17,6 @@ module App
       v
     end
   end
-
-  redis_client = Redis.new(host: ENV['REDIS_HOST'])
-  namespace = ENV['DB_SCHEMA'] || 'public'
-  REDIS = Redis::Namespace.new(namespace, redis: redis_client)
 
   START_DOWNLOAD_YEAR = Time.new(ENV.fetch('START_DOWNLOAD_YEAR', 2000).to_i)
   ADDITIONAL_MODELS = ENV.fetch('ADDITIONAL_MODELS', '').split(',').map(&:to_sym)
